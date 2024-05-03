@@ -1,11 +1,15 @@
 using api.Data;
+using api.Data.DtoMapping;
+using api.Data.Helpers;
 using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers;
 
 [Route("[Controller]")]
+[EnableCors("Cors")]
 public class PostController : ControllerBase
 {
     private AppDbContext Db { get; set; }
@@ -16,24 +20,21 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    [EnableCors("Cors")]
     public ActionResult Get()
     {
-        var test = Db.Posts.ToList();
+        var posts = PostMapping.MapResponseDto(Db.Posts.Include(x => x.Image).ToList());
 
-        if (test == null) return BadRequest("no data");
-
-        return Ok(test);
+        return Ok(posts);
     }
 
     [HttpPost]
-    public ActionResult PostData(PostDto? postDto)
+    public async Task<ActionResult> PostData(PostPostDto? postDto)
     {
         if (postDto == null) return BadRequest("No post");
 
-        if (postDto.Name == "") return BadRequest("No Post Name");
+        if (string.IsNullOrEmpty(postDto.Name)) return BadRequest("No Post Name");
         
-        if (postDto.Url == "") return BadRequest("No Post Name");
+        if (string.IsNullOrEmpty(postDto.Url)) return BadRequest("No Post Name");
 
         Post post = new Post
         {
@@ -43,6 +44,23 @@ public class PostController : ControllerBase
             UpdateDate = DateTime.Now
         };
         
+        //when image is provided store it and add it to the post
+        if (postDto.FormFile != null && postDto.FormFile.ContentType.Split("/")[0] == "image")
+        {
+           string filePath = await ImageStore.StoreImage(postDto.FormFile);
+
+           Image image = new Image()
+           {
+               ImagePath = filePath,
+               CreationDate = DateTime.Now,
+               UpdateDate = DateTime.Now
+           };
+
+           Db.Images.Add(image);
+
+           post.Image = image;
+        }
+        
         Db.Posts.Add(post);
         Db.SaveChanges();
         
@@ -50,7 +68,7 @@ public class PostController : ControllerBase
     }
 
     [HttpPut]
-    public ActionResult PutData(PostDto? postDto) 
+    public ActionResult PutData(PutPostDto? postDto) 
     {
         if(postDto == null) return BadRequest("No data");
 
@@ -60,9 +78,9 @@ public class PostController : ControllerBase
 
         if(post == null) return NotFound("No post found");
 
-        post.Name = postDto.Name;
+        post.Name = postDto.Name ?? post.Name;
 
-        post.Url = postDto.Url;
+        post.Url = postDto.Url ?? post.Url;
 
         post.UpdateDate = DateTime.Now;
 
@@ -72,8 +90,8 @@ public class PostController : ControllerBase
     }
 
     [HttpDelete]
-    public ActionResult DeleteData(int? id) {
-        
+    public ActionResult DeleteData(int? id) 
+    {
         if(id == null || id == 0) return BadRequest("No id filled");
 
         Post? post = Db.Posts.Find(id);
@@ -85,6 +103,5 @@ public class PostController : ControllerBase
         Db.SaveChanges();
         
         return Ok();
-
     }
 }

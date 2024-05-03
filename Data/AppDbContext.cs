@@ -1,6 +1,7 @@
 using System.Data.Common;
 using api.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Directory = api.Data.Helpers.Directory;
 
 namespace api.Data;
 
@@ -16,19 +17,12 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string strExeFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        
-        string? strWorkPath = System.IO.Path.GetDirectoryName(strExeFilePath);
-
-        if (strWorkPath == null)
-        {
-            throw new Exception("could not obtain a working directory");
-        }
-
-        string connectionString = "Data Source=" + strWorkPath + _configuration.GetConnectionString("Default");
+        string connectionString = "Data Source=" + Directory.GetWorkingDirectory() + _configuration.GetConnectionString("Default");
         
         optionsBuilder.UseSqlite(connectionString);
     }
 
     public DbSet<Post> Posts { get; set; }
+
+    public DbSet<Image> Images { get; set; }
 }

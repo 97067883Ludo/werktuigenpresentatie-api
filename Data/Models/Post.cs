@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace api.Data.Models;
 
-public class Post
+public class Post : CreatedUpdatedBase
 {
     [Key]
     public int Id { get; set; }
@@ -10,8 +11,6 @@ public class Post
     public string Name { get; set; } = string.Empty;
 
     public string Url { get; set; } = string.Empty;
-
-    public DateTime CreationDate { get; set; }
-
-    public DateTime UpdateDate { get; set; }
+    
+    public virtual Image? Image { get; set; }
 }

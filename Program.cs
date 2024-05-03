@@ -11,12 +11,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "Cors",
         policy  =>
         {
-            policy.AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders();
+            policy.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
         });
 });
 
