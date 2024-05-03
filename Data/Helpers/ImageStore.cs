@@ -26,9 +26,4 @@ public static class ImageStore
 
         return guid + "." + filetype;
     }
-
-    public static FileStream GetImage(string path)
-    {
-        return File.Open(Path.Combine(path), FileMode.Open);
-    }
 }
