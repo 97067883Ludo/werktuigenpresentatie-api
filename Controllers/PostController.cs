@@ -82,8 +82,6 @@ public class PostController : ControllerBase
         if (!string.IsNullOrEmpty(postDto.Name)) post.Name = postDto.Name;
 
         if (!string.IsNullOrEmpty(postDto.Url)) post.Url = postDto.Url;
-        
-        
 
         post.UpdateDate = DateTime.Now;
 
