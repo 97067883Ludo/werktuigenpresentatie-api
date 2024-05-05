@@ -5,6 +5,7 @@ using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HostingEnvironmentExtensions = Microsoft.AspNetCore.Hosting.HostingEnvironmentExtensions;
 
 namespace api.Controllers;
 
@@ -72,15 +73,17 @@ public class PostController : ControllerBase
     {
         if(postDto == null) return BadRequest("No data");
 
-        if(postDto.id == null || postDto.id == 0) return BadRequest("No data");
+        if(postDto.id == 0) return BadRequest("No data");
 
         Post? post = Db.Posts.Find(postDto.id);
 
         if(post == null) return NotFound("No post found");
 
-        post.Name = postDto.Name ?? post.Name;
+        if (!string.IsNullOrEmpty(postDto.Name)) post.Name = postDto.Name;
 
-        post.Url = postDto.Url ?? post.Url;
+        if (!string.IsNullOrEmpty(postDto.Url)) post.Url = postDto.Url;
+        
+        
 
         post.UpdateDate = DateTime.Now;
 

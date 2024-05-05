@@ -22,8 +22,7 @@ public class ImageController : ControllerBase
         {
             return NotFound();
         }
-        
-        //TODO: image/webp is nu hardcoded
-        return PhysicalFile(image.ImagePath, "image/webp");
+
+        return PhysicalFile(image.ImagePath, "image/" + image.ImagePath.Split(".").Last());
     }
 }

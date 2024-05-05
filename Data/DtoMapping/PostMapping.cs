@@ -26,7 +26,7 @@ public static class PostMapping
             {
                 Id = post.Image.Id,
                 //TODO: ConvertImageToUrl nu hardcoded.
-                url = "localhost:5172/image?id=" + post.Image.Id
+                url = "http://localhost:5172/image?id=" + post.Image.Id
             }
         };
     }
