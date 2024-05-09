@@ -14,16 +14,18 @@ namespace api.Controllers;
 public class PostController : ControllerBase
 {
     private AppDbContext Db { get; set; }
+    private IConfiguration _configuration { get; set; }
 
-    public PostController(AppDbContext appDbContext)
+    public PostController(AppDbContext appDbContext, IConfiguration configuration)
     {
         Db = appDbContext;
+        _configuration = configuration;
     }
 
     [HttpGet]
     public ActionResult Get()
     {
-        var posts = PostMapping.MapResponseDto(Db.Posts.Include(x => x.Image).ToList());
+        var posts = PostMapping.MapResponseDto(Db.Posts.Include(x => x.Image).ToList(), _configuration["BaseUrl"] ?? "");
 
         return Ok(posts);
     }
@@ -75,8 +77,10 @@ public class PostController : ControllerBase
 
         if(postDto.id == 0) return BadRequest("No data");
 
-        Post? post = Db.Posts.Find(postDto.id);
+        Post? post = Db.Posts.Include("image").Where(x => x.Id == postDto.id).FirstOrDefault();
 
+        
+        
         if(post == null) return NotFound("No post found");
 
         if (!string.IsNullOrEmpty(postDto.Name)) post.Name = postDto.Name;

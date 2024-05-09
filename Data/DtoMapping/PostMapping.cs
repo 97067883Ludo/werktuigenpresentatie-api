@@ -5,7 +5,7 @@ namespace api.Data.DtoMapping;
 
 public static class PostMapping
 {
-    public static PostResponseDto MapResponseDto(Post post)
+    public static PostResponseDto MapResponseDto(Post post, string url)
     {
         if (post.Image == null)
         {
@@ -26,18 +26,18 @@ public static class PostMapping
             {
                 Id = post.Image.Id,
                 //TODO: ConvertImageToUrl nu hardcoded.
-                url = "http://localhost:5172/image?id=" + post.Image.Id
+                url = url + "/image/?id=" + post.Image.Id
             }
         };
     }
     
-    public static List<PostResponseDto> MapResponseDto(List<Post> post)
+    public static List<PostResponseDto> MapResponseDto(List<Post> post, string url)
     {
         List<PostResponseDto> listOfPosts = new (); 
         
         foreach (Post post1 in post)
         {
-            listOfPosts.Add(MapResponseDto(post1));
+            listOfPosts.Add(MapResponseDto(post1, url));
         }
 
         return listOfPosts;

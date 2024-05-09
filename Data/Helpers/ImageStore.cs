@@ -1,3 +1,5 @@
+using api.Data.Models;
+
 namespace api.Data.Helpers;
 
 public static class ImageStore
@@ -16,6 +18,11 @@ public static class ImageStore
         }
         
         return Path.Combine(Directory.GetDirectory("images"), fileName);
+    }
+    
+    public static string ReplaceImage(Image oldImage, IFormFile newFile)
+    {
+        return "";
     }
 
     public static string GenerateRandomFilenName(IFormFile file)
