@@ -12,5 +12,5 @@ public class Post : CreatedUpdatedBase
 
     public string Url { get; set; } = string.Empty;
     
-    public virtual Image? Image { get; set; }
+    public Image? Image { get; set; }
 }

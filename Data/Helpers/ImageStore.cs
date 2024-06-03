@@ -20,9 +20,11 @@ public static class ImageStore
         return Path.Combine(Directory.GetDirectory("images"), fileName);
     }
     
-    public static string ReplaceImage(Image oldImage, IFormFile newFile)
+    public async static Task<string> ReplaceImage(Image oldImage, IFormFile newFile)
     {
-        return "";
+        DeleteImage(oldImage);
+
+        return await StoreImage(newFile);
     }
 
     public static string GenerateRandomFilenName(IFormFile file)
@@ -32,5 +34,10 @@ public static class ImageStore
         string filetype = file.FileName.Split(".").Last();
 
         return guid + "." + filetype;
+    }
+
+    public static void DeleteImage(Image image)
+    {
+        File.Delete(image.ImagePath);
     }
 }

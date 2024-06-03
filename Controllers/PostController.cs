@@ -71,15 +71,13 @@ public class PostController : ControllerBase
     }
 
     [HttpPut]
-    public ActionResult PutData(PutPostDto? postDto) 
+    public async Task<ActionResult> PutData(PutPostDto? postDto) 
     {
         if(postDto == null) return BadRequest("No data");
 
         if(postDto.id == 0) return BadRequest("No data");
 
-        Post? post = Db.Posts.Include("image").Where(x => x.Id == postDto.id).FirstOrDefault();
-
-        
+        Post? post = Db.Posts.Where(x => x.Id == postDto.id).Include(post => post.Image).FirstOrDefault();
         
         if(post == null) return NotFound("No post found");
 
@@ -87,6 +85,22 @@ public class PostController : ControllerBase
 
         if (!string.IsNullOrEmpty(postDto.Url)) post.Url = postDto.Url;
 
+        if (postDto.FormFile?.Length > 0)
+        {
+            if (post.Image == null)
+            {
+                Image newImage = new Image() { ImagePath = await ImageStore.StoreImage(postDto.FormFile) };
+                
+                post.Image = newImage;
+                
+                Db.Images.Add(newImage);
+            }
+            else
+            {
+                post.Image.ImagePath = await ImageStore.ReplaceImage(post.Image, postDto.FormFile);
+            }
+        }
+        
         post.UpdateDate = DateTime.Now;
 
         Db.SaveChanges();
