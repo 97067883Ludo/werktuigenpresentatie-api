@@ -5,7 +5,6 @@ using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HostingEnvironmentExtensions = Microsoft.AspNetCore.Hosting.HostingEnvironmentExtensions;
 
 namespace api.Controllers;
 
@@ -22,54 +21,59 @@ public class PostController : ControllerBase
         _configuration = configuration;
     }
 
+    #region Get Posts
     [HttpGet]
     public ActionResult Get()
     {
         var posts = PostMapping.MapResponseDto(Db.Posts.Include(x => x.Image).ToList(), _configuration["BaseUrl"] ?? "");
-
+    
         return Ok(posts);
     }
+    #endregion
 
-    [HttpPost]
-    public async Task<ActionResult> PostData(PostPostDto? postDto)
-    {
-        if (postDto == null) return BadRequest("No post");
-
-        if (string.IsNullOrEmpty(postDto.Name)) return BadRequest("No Post Name");
-        
-        if (string.IsNullOrEmpty(postDto.Url)) return BadRequest("No Post Name");
-
-        Post post = new Post
+    #region Post psot
+     [HttpPost]
+        public async Task<ActionResult> PostData(PostPostDto? postDto)
         {
-            Name = postDto.Name,
-            Url = postDto.Url,
-            CreationDate = DateTime.Now,
-            UpdateDate = DateTime.Now
-        };
-        
-        //when image is provided store it and add it to the post
-        if (postDto.FormFile != null && postDto.FormFile.ContentType.Split("/")[0] == "image")
-        {
-           string filePath = await ImageStore.StoreImage(postDto.FormFile);
-
-           Image image = new Image()
-           {
-               ImagePath = filePath,
-               CreationDate = DateTime.Now,
-               UpdateDate = DateTime.Now
-           };
-
-           Db.Images.Add(image);
-
-           post.Image = image;
+            if (postDto == null) return BadRequest("No post");
+    
+            if (string.IsNullOrEmpty(postDto.Name)) return BadRequest("No Post Name");
+            
+            if (string.IsNullOrEmpty(postDto.Url)) return BadRequest("No Post Name");
+    
+            Post post = new Post
+            {
+                Name = postDto.Name,
+                Url = postDto.Url,
+                CreationDate = DateTime.Now,
+                UpdateDate = DateTime.Now
+            };
+            
+            //when image is provided store it and add it to the post
+            if (postDto.FormFile != null && postDto.FormFile.ContentType.Split("/")[0] == "image")
+            {
+               string filePath = await ImageStore.StoreImage(postDto.FormFile);
+    
+               Image image = new Image()
+               {
+                   ImagePath = filePath,
+                   CreationDate = DateTime.Now,
+                   UpdateDate = DateTime.Now
+               };
+    
+               Db.Images.Add(image);
+    
+               post.Image = image;
+            }
+            
+            Db.Posts.Add(post);
+            Db.SaveChanges();
+            
+            return Ok(post);
         }
-        
-        Db.Posts.Add(post);
-        Db.SaveChanges();
-        
-        return Ok(post);
-    }
+    #endregion
 
+    #region Put Post
     [HttpPut]
     public async Task<ActionResult> PutData(PutPostDto? postDto) 
     {
@@ -103,11 +107,13 @@ public class PostController : ControllerBase
         
         post.UpdateDate = DateTime.Now;
 
-        Db.SaveChanges();
+        await Db.SaveChangesAsync();
 
         return Ok(post);
-    }
+    }    
+    #endregion
 
+    #region Delete Post
     [HttpDelete]
     public ActionResult DeleteData(int? id) 
     {
@@ -122,5 +128,6 @@ public class PostController : ControllerBase
         Db.SaveChanges();
         
         return Ok();
-    }
+    }    
+    #endregion
 }

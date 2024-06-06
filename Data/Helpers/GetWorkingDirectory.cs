@@ -20,12 +20,7 @@ public static class Directory
 
     public static bool DirectoryExists(string path)
     {
-        if (!Path.Exists(Path.Combine(GetWorkingDirectory(), path)))
-        {
-            return false;
-        }
-
-        return true;
+        return Path.Exists(Path.Combine(GetWorkingDirectory(), path));
     }
 
     public static DirectoryInfo CreateDirectory(string path)
