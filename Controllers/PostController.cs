@@ -20,8 +20,7 @@ public class PostController : ControllerBase
         Db = appDbContext;
         _configuration = configuration;
     }
-
-    #region Get Posts
+    
     [HttpGet]
     public ActionResult Get()
     {
@@ -29,7 +28,19 @@ public class PostController : ControllerBase
     
         return Ok(posts);
     }
-    #endregion
+    
+    [HttpGet("id")]
+    public ActionResult GetId(int id)
+    {
+        Post? post = Db.Posts.Include(x => x.Image).FirstOrDefault(x => x.Id == id);
+    
+        if (post == null)
+        {
+            return NotFound();
+        }
+        
+        return Ok(PostMapping.MapResponseDto(post, _configuration["BaseUrl"] ?? ""));
+    }
 
     #region Post psot
      [HttpPost]
@@ -39,7 +50,7 @@ public class PostController : ControllerBase
     
             if (string.IsNullOrEmpty(postDto.Name)) return BadRequest("No Post Name");
             
-            if (string.IsNullOrEmpty(postDto.Url)) return BadRequest("No Post Name");
+            if (string.IsNullOrEmpty(postDto.Url)) return BadRequest("No Post URL");
     
             Post post = new Post
             {

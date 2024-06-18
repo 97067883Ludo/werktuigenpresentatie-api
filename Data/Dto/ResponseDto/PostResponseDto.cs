@@ -1,6 +1,8 @@
+using api.Data.Models;
+
 namespace api.Data.Dto.ResponseDto;
 
-public class PostResponseDto
+public class PostResponseDto : CreatedUpdatedBase
 {
     public int Id { get; set; }
 
@@ -8,5 +10,5 @@ public class PostResponseDto
 
     public string Url { get; set; } = string.Empty;
 
-    public ImageResponseDto image { get; set; }
+    public ImageResponseDto Image { get; set; }
 }

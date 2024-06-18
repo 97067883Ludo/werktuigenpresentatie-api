@@ -14,6 +14,8 @@ public static class PostMapping
                 Id = post.Id,
                 Name = post.Name,
                 Url = post.Url,
+                CreationDate = post.CreationDate,
+                UpdateDate = post.UpdateDate,
             };   
         }
         
@@ -22,7 +24,9 @@ public static class PostMapping
             Id = post.Id,
             Name = post.Name,
             Url = post.Url,
-            image = new ImageResponseDto()
+            CreationDate = post.CreationDate,
+            UpdateDate = post.UpdateDate,
+            Image = new ImageResponseDto()
             {
                 Id = post.Image.Id,
                 //TODO: ConvertImageToUrl nu hardcoded.
