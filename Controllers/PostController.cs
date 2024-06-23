@@ -78,7 +78,7 @@ public class PostController : ControllerBase
             }
             
             Db.Posts.Add(post);
-            Db.SaveChanges();
+            await Db.SaveChangesAsync();
             
             return Ok(post);
         }
@@ -129,11 +129,16 @@ public class PostController : ControllerBase
     public ActionResult DeleteData(int? id) 
     {
         if(id == null || id == 0) return BadRequest("No id filled");
-
-        Post? post = Db.Posts.Find(id);
+        
+        Post? post = Db.Posts.Include(x => x.Image).FirstOrDefault(x => x.Id == id);
 
         if(post == null) return NotFound("no object with that id");
-
+        
+        if (post.Image != null)
+        {
+            Db.Images.Remove(post.Image);
+        }
+        
         Db.Posts.Remove(post);
 
         Db.SaveChanges();

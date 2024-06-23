@@ -13,4 +13,6 @@ public class Post : CreatedUpdatedBase
     public string Url { get; set; } = string.Empty;
     
     public Image? Image { get; set; }
+
+    public Category? Category { get; set; }
 }
