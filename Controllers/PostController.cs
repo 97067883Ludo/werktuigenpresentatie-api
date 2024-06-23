@@ -29,7 +29,7 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
     
-    [HttpGet("id")]
+    [HttpGet("id")] 
     public ActionResult GetId(int id)
     {
         Post? post = Db.Posts.Include(x => x.Image).FirstOrDefault(x => x.Id == id);
@@ -43,7 +43,7 @@ public class PostController : ControllerBase
     }
 
     #region Post psot
-     [HttpPost]
+     [HttpPost] 
         public async Task<ActionResult> PostData(PostPostDto? postDto)
         {
             if (postDto == null) return BadRequest("No post");
