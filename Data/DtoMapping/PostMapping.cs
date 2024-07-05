@@ -16,6 +16,7 @@ public static class PostMapping
                 Url = post.Url,
                 CreationDate = post.CreationDate,
                 UpdateDate = post.UpdateDate,
+                Image = new ImageResponseDto(),
             };   
         }
         
