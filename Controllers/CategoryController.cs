@@ -41,6 +41,8 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(200)]
     public async Task<IActionResult> NewCategory(CategoryCreationDto? newCategory)
     {
         if (newCategory == null)
