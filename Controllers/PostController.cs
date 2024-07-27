@@ -5,6 +5,7 @@ using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace api.Controllers;
 
@@ -119,7 +120,7 @@ public class PostController : ControllerBase
         post.UpdateDate = DateTime.Now;
 
         await Db.SaveChangesAsync();
-
+        
         return Ok(post);
     }    
     #endregion
