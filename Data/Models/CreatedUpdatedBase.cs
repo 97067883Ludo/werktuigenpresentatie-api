@@ -1,6 +1,6 @@
 namespace api.Data.Models;
 
-public abstract class CreatedUpdatedBase
+public interface ICreatedUpdatedBase
 {
     public DateTime CreationDate { get; set; }
 

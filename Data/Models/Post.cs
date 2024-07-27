@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace api.Data.Models;
 
-public class Post : CreatedUpdatedBase
+public class Post : ICreatedUpdatedBase
 {
     [Key]
     public int Id { get; set; }
@@ -15,4 +15,7 @@ public class Post : CreatedUpdatedBase
     public Image? Image { get; set; }
 
     public Category? Category { get; set; }
+    
+    public DateTime CreationDate { get; set; }
+    public DateTime UpdateDate { get; set; }
 }
