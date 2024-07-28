@@ -89,6 +89,9 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]    
     public IActionResult UpdateCategory(CategoryUpdateDto? newCategory)
     {
         if (newCategory == null)
@@ -105,7 +108,7 @@ public class CategoryController : ControllerBase
 
         if (categoryToBeUpdated == null)
         {
-            return BadRequest("no category found");
+            return NotFound("no category found");
         }
 
         if (!string.IsNullOrEmpty(newCategory.NewName) || !string.IsNullOrWhiteSpace(newCategory.NewName))
