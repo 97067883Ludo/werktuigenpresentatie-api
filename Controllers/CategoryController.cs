@@ -63,5 +63,28 @@ public class CategoryController : ControllerBase
         
         return Ok();
     }
-    
+
+    [HttpDelete]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public IActionResult DeleteCategory(int? id)
+    {
+        if (id == null)
+        {
+            return BadRequest("no id has been filled in.");
+        }
+
+        Category? categoryToDelete = _db.Categories.Find(id);
+
+        if (categoryToDelete == null)
+        {
+            return BadRequest("no category found with that id.");
+        }
+
+        _db.Categories.Remove(categoryToDelete);
+
+        _db.SaveChanges();
+        
+        return Ok("category deleted");
+    }
 }
