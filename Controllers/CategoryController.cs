@@ -87,4 +87,35 @@ public class CategoryController : ControllerBase
         
         return Ok("category deleted");
     }
+
+    [HttpPut]
+    public IActionResult UpdateCategory(CategoryUpdateDto? newCategory)
+    {
+        if (newCategory == null)
+        {
+            return BadRequest("You need to give a category");
+        }
+
+        if (newCategory.Id == null)
+        {
+            return BadRequest("give an category id");
+        }
+
+        Category? categoryToBeUpdated = _db.Categories.Find(newCategory.Id);
+
+        if (categoryToBeUpdated == null)
+        {
+            return BadRequest("no category found");
+        }
+
+        if (!string.IsNullOrEmpty(newCategory.NewName) || !string.IsNullOrWhiteSpace(newCategory.NewName))
+        {
+            categoryToBeUpdated.Name = newCategory.NewName;
+            categoryToBeUpdated.UpdateDate = DateTime.Now;
+        }
+
+        _db.SaveChanges();
+        
+        return Ok(categoryToBeUpdated);
+    }
 }
