@@ -61,7 +61,7 @@ public class CategoryController : ControllerBase
 
         await _db.SaveChangesAsync();
         
-        return Ok();
+        return Ok(category);
     }
 
     [HttpDelete]
