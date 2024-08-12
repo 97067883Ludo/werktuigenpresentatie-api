@@ -1,4 +1,6 @@
 using api.Data;
+using api.SignalR.ScreenHub;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>();
 
@@ -36,6 +40,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.MapPost("broadcast", async (string message, IHubContext<ScreenHub, IScreenHub> context) => {
+    await context.Clients.All.RecieveMessage(message);
+    return Results.NoContent();
+});
+
+app.MapHub<ScreenHub>("/screen-hub");
 
 app.MapControllers();
 
