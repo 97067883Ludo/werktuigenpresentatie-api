@@ -48,7 +48,7 @@ public class ScreenHub : Hub<IScreenHub>
     public async Task CheckIn(int screenId)
     {
         var test = clients.Where(x => x.Key == Context.ConnectionId).FirstOrDefault();
-        
+        Clients.Client(Context.ConnectionId).checkIn("{\"screenId\":\"" + screenId + "\", \"status\":\"Ok\"}");
     }
 }
 
@@ -56,4 +56,6 @@ public interface IScreenHub {
     Task RecieveMessage(string message);
 
     Task GetPostsFromScreenId(string message);
+
+    void checkIn(string response);
 }
