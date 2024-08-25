@@ -20,11 +20,7 @@ public class ScreenHub : Hub<IScreenHub>
     private Dictionary<string, int> clients = new Dictionary<string, int>();
 
     public override async Task OnConnectedAsync() {
-        await Clients.All.RecieveMessage($"New Member ({Context.ConnectionId}): Joined");
-        
         clients.Add(Context.ConnectionId, 0);
-        
-        Console.WriteLine("hallo");
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
@@ -46,17 +42,18 @@ public class ScreenHub : Hub<IScreenHub>
 
     public async Task GetAllPosts()
     {
-        await Clients.Client(Context.ConnectionId).RecieveMessage(JsonSerializer.Serialize(_db.Posts.Include(x => x.Image).ToList()));
+        await Clients.Client(Context.ConnectionId).GetPostsFromScreenId(JsonSerializer.Serialize(_db.Posts.Include(x => x.Image).ToList()));
     }
 
     public async Task CheckIn(int screenId)
     {
         var test = clients.Where(x => x.Key == Context.ConnectionId).FirstOrDefault();
+        
     }
 }
 
 public interface IScreenHub {
     Task RecieveMessage(string message);
-    
-    
+
+    Task GetPostsFromScreenId(string message);
 }
