@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using api.Data;
+using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,9 @@ public class ScreenHub : Hub<IScreenHub>
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         Console.WriteLine(Context.ConnectionId);
-
+        var client = clients.Where(x => x.Key == Context.ConnectionId).FirstOrDefault();
+        
+        
         return Task.CompletedTask;
     }
 
@@ -47,8 +50,20 @@ public class ScreenHub : Hub<IScreenHub>
 
     public async Task CheckIn(int screenId)
     {
-        var test = clients.Where(x => x.Key == Context.ConnectionId).FirstOrDefault();
-        Clients.Client(Context.ConnectionId).checkIn("{\"screenId\":\"" + screenId + "\", \"status\":\"Ok\"}");
+        clients[Context.ConnectionId] = screenId;
+        Screen? screen = _db.Screens.Find(screenId);
+        
+        if (screen == null)
+        {
+            await Clients.Client(Context.ConnectionId).CheckIn("{\"screenId\":\"" + screenId + "\", \"status\":\"NotFound\"}");
+            return;
+        }
+        
+        screen.Online = true;
+        screen.LastSeenOnline = DateTime.Now;
+        await _db.SaveChangesAsync();
+        
+        await Clients.Client(Context.ConnectionId).CheckIn("{\"screenId\":\"" + screenId + "\", \"status\":\"Ok\"}");
     }
 }
 
@@ -57,5 +72,5 @@ public interface IScreenHub {
 
     Task GetPostsFromScreenId(string message);
 
-    void checkIn(string response);
+    Task CheckIn(string response);
 }
