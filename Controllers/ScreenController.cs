@@ -76,7 +76,7 @@ public class ScreenController : ControllerBase
         if (string.IsNullOrEmpty(screenUpdateDto.Name))
             return BadRequest("Screen name cannot be empty");
 
-        Screen? screen = _db.Screens.Find(screenUpdateDto.screenId);
+        Screen? screen = _db.Screens.Find(screenUpdateDto.ScreenId);
 
         if (screen == null)
             return NotFound("Could not find a screen");

@@ -2,6 +2,6 @@
 
 public class ScreenUpdateDto
 {
-    public int screenId { get; set; } = 0;
+    public int ScreenId { get; set; } = 0;
     public string Name { get; set; } = string.Empty;
 }

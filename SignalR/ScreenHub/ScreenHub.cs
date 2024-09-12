@@ -18,16 +18,18 @@ public class ScreenHub : Hub<IScreenHub>
         _db = db;
     }
     
-    private Dictionary<string, int> clients = new Dictionary<string, int>();
+    private Dictionary<string, int> _clients = new Dictionary<string, int>();
 
-    public override async Task OnConnectedAsync() {
-        clients.Add(Context.ConnectionId, 0);
+    public override Task OnConnectedAsync()
+    {
+        _clients.Add(Context.ConnectionId, 0);
+        return Task.CompletedTask;
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         Console.WriteLine(Context.ConnectionId);
-        var client = clients.Where(x => x.Key == Context.ConnectionId).FirstOrDefault();
+        var client = _clients.FirstOrDefault(x => x.Key == Context.ConnectionId);
         
         
         return Task.CompletedTask;
@@ -50,7 +52,7 @@ public class ScreenHub : Hub<IScreenHub>
 
     public async Task CheckIn(int screenId)
     {
-        clients[Context.ConnectionId] = screenId;
+        _clients[Context.ConnectionId] = screenId;
         Screen? screen = _db.Screens.Find(screenId);
         
         if (screen == null)
