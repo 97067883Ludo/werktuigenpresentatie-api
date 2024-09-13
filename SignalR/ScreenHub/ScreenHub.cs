@@ -51,7 +51,7 @@ public class ScreenHub : Hub<IScreenHub>
     }
 
     public async Task CheckIn(int screenId)
-    {
+     {
         _clients[Context.ConnectionId] = screenId;
         Screen? screen = _db.Screens.Find(screenId);
         

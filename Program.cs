@@ -1,4 +1,7 @@
 using api.Data;
+using api.Data.AutoloadSingleton;
+using api.Data.ScreenServices;
+using api.Data.ScreenServices.Interfaces;
 using api.SignalR.ScreenHub;
 using Microsoft.AspNetCore.SignalR;
 
@@ -13,7 +16,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(ServiceLifetime.Singleton);
+
+builder.Services.AddSingleton<IOnlineService, OnlineService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -27,6 +32,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+ConfigureService.Configure(app);
 
 app.UseCors("Cors");
 
