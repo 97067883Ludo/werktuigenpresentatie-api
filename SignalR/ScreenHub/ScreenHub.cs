@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using api.Data;
+using api.Data.DtoMapping;
 using api.Data.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
@@ -13,9 +14,12 @@ public class ScreenHub : Hub<IScreenHub>
 
     private readonly AppDbContext _db;
     
-    public ScreenHub(AppDbContext db)
+    private IConfiguration _configuration { get; set; }
+    
+    public ScreenHub(AppDbContext db, IConfiguration configuration)
     {
         _db = db;
+        _configuration = configuration;
     }
     
     private Dictionary<string, int> _clients = new Dictionary<string, int>();
@@ -47,7 +51,7 @@ public class ScreenHub : Hub<IScreenHub>
 
     public async Task GetAllPosts()
     {
-        await Clients.Client(Context.ConnectionId).GetPostsFromScreenId(JsonSerializer.Serialize(_db.Posts.Include(x => x.Image).ToList()));
+        await Clients.Client(Context.ConnectionId).GetPostsFromScreenId(JsonSerializer.Serialize(PostMapping.MapResponseDto(_db.Posts.Include(x => x.Image).ToList(), _configuration["BaseUrl"] ?? "")));
     }
 
     public async Task CheckIn(int screenId)

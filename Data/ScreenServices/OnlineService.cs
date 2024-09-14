@@ -17,7 +17,7 @@ public class OnlineService : IOnlineService
 
     public void StartLoop()
     {
-        _timer = new System.Timers.Timer(2000);
+        _timer = new System.Timers.Timer(20000);
         _timer.AutoReset = true;
         _timer.Elapsed += Loop;
         _timer.Start();
@@ -27,7 +27,6 @@ public class OnlineService : IOnlineService
     {
         _timer.Stop();
     }
-
     
     private void Loop(object? hallo, ElapsedEventArgs args)
     {
