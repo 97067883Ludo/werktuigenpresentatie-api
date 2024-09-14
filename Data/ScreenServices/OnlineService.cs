@@ -1,3 +1,4 @@
+using System.Timers;
 using api.Data.Models;
 using api.Data.ScreenServices.Interfaces;
 
@@ -5,44 +6,33 @@ namespace api.Data.ScreenServices;
 
 public class OnlineService : IOnlineService
 {
-    private CancellationTokenSource Token { get; set; } = new();
+    private System.Timers.Timer _timer { get; set; }
     private readonly AppDbContext _db;
 
     public OnlineService(AppDbContext appDbContext)
     {
         _db = appDbContext;
-        //StartLoop();
+        StartLoop();
     }
 
-    public async Task StartLoop()
+    public void StartLoop()
     {
-        if (Token.IsCancellationRequested)
-        {
-            Token.Dispose();
-            Token = new CancellationTokenSource();
-        }
-        
-        await Loop();
-
-        var test = "";
+        _timer = new System.Timers.Timer(2000);
+        _timer.AutoReset = true;
+        _timer.Elapsed += Loop;
+        _timer.Start();
     }
 
     public void StopLoop()
     {
-        Token.Cancel();
+        _timer.Stop();
     }
 
-
-    private async Task Loop()
+    
+    private void Loop(object? hallo, ElapsedEventArgs args)
     {
-        while (Token.IsCancellationRequested == false)
-        {
-            List<Screen> screens = _db.Screens.ToList();
-
-            screens.ForEach(CheckScreenOnlineStatus);
-            
-            Thread.Sleep(1000);
-        }
+        List<Screen> screens = _db.Screens.ToList();
+        screens.ForEach(CheckScreenOnlineStatus);
     }
 
     private void CheckScreenOnlineStatus(Screen screen)

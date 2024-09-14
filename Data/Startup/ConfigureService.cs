@@ -1,6 +1,6 @@
 using api.Data.ScreenServices.Interfaces;
 
-namespace api.Data.AutoloadSingleton;
+namespace api.Data.Startup;
 
 public class ConfigureService
 {

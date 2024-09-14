@@ -1,7 +1,7 @@
 using api.Data;
-using api.Data.AutoloadSingleton;
 using api.Data.ScreenServices;
 using api.Data.ScreenServices.Interfaces;
+using api.Data.Startup;
 using api.SignalR.ScreenHub;
 using Microsoft.AspNetCore.SignalR;
 
