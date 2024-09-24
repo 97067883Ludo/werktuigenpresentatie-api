@@ -2,6 +2,8 @@ using api.Data;
 using api.Data.ScreenServices;
 using api.Data.ScreenServices.Interfaces;
 using api.Data.Startup;
+using api.Data.Strategies.FilterControllerStrategy;
+using api.Data.Strategies.FilterControllerStrategy.Strategies;
 using api.SignalR.ScreenHub;
 using Microsoft.AspNetCore.SignalR;
 
@@ -19,6 +21,11 @@ builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(ServiceLifetime.Singleton);
 
 builder.Services.AddSingleton<IOnlineService, OnlineService>();
+
+builder.Services.AddSingleton<IFilterControllerStrategy, ScreenStrategy>();
+builder.Services.AddSingleton<IFilterControllerStrategy, PostStrategy>();
+
+builder.Services.AddSingleton<IFilterController, FilterControllerStrategy>();
 
 builder.Services.AddHttpContextAccessor();
 
