@@ -17,7 +17,7 @@ public class ScreenController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(200)] 
     public IActionResult GetAll()
     {
         List<Screen> screens = _db.Screens.ToList();
