@@ -13,8 +13,6 @@ public class Post : ICreatedUpdatedBase
     public string Url { get; set; } = string.Empty;
     
     public Image? Image { get; set; }
-
-    public Category? Category { get; set; }
     
     public DateTime CreationDate { get; set; }
     public DateTime UpdateDate { get; set; }

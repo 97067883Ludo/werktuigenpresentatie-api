@@ -9,15 +9,13 @@ public class FilterControllerStrategy : IFilterController
         _strategies = strategies;
     }
 
-    public Type Execute(Type typeToStrategy)
+    public IQueryable Execute(Type typeToStrategy, string where, string include)
     {
-        Type? test = _strategies.Where(x => x.type == typeToStrategy).FirstOrDefault()?.type;
-        return test;
+        return  _strategies.FirstOrDefault(x => x.type == typeToStrategy)?.GetDbObject(where, include) ?? throw new Exception();
     }
-
 }
 
 public interface IFilterController
 {
-    public Type Execute(Type typeToStrategy);
+    public IQueryable Execute(Type typeToStrategy, string where, string include);
 }

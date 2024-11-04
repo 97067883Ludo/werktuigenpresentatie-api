@@ -2,6 +2,7 @@ using api.Data;
 using api.Data.Dto.Category;
 using api.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers;
 
@@ -20,7 +21,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(200)]
     public IActionResult GetAll()
     {
-        List<Category> categories = _db.Categories.ToList();
+        List<Category> categories = _db.Categories.Include(x => x.Posts).ToList();
         
         return Ok(categories);
     }
@@ -120,5 +121,30 @@ public class CategoryController : ControllerBase
         _db.SaveChanges();
         
         return Ok(categoryToBeUpdated);
+    }
+
+
+    [HttpPost("AddPost")]
+    public IActionResult AddPost(int? PostId, int? CategoryId)
+    {
+        Post? post = _db.Posts.Find(PostId);
+        
+        if (post == null)
+        {
+            return BadRequest("post not found");
+        }
+        
+        Category? category = _db.Categories.Find(CategoryId);
+
+        if (category == null)
+        {
+            return BadRequest("No category found with that id");
+        }
+        
+        category.Posts.Add(post);
+        
+        _db.SaveChanges();
+        
+        return Ok(category);
     }
 }

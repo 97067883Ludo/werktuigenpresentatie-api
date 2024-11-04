@@ -2,6 +2,7 @@
 using api.Data.Dto.Screen;
 using api.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers;
 
@@ -20,7 +21,9 @@ public class ScreenController : ControllerBase
     [ProducesResponseType(200)] 
     public IActionResult GetAll()
     {
-        List<Screen> screens = _db.Screens.ToList();
+        List<Screen> screens = _db.Screens.Include(x => x.Posts)!.ThenInclude(x => x.Image)
+            .Include(x => x.Categories)!.ThenInclude(x => x.Posts)
+            .ToList();
 
         return Ok(screens);
     }
@@ -31,7 +34,8 @@ public class ScreenController : ControllerBase
         if (screenId == null)
             return BadRequest("Screen cannot be null");
         
-        Screen? screen = _db.Screens.Find(screenId);
+        Screen? screen = _db.Screens.Include(x => x.Posts)!.ThenInclude(x => x.Image)
+            .Include(x => x.Categories)!.ThenInclude(x => x.Posts).FirstOrDefault(x => x.Id == screenId);
 
         if (screen == null)
             return NotFound("Could not find screen with that id");
@@ -105,4 +109,104 @@ public class ScreenController : ControllerBase
 
         return Ok("done");
     }
+    
+    //relations
+
+    [HttpPost("/Screen/AddCategory")]
+    public IActionResult AddCategory(int ScreenId, int CategoryId)
+    {
+        Category? category = _db.Categories.Find(CategoryId);
+
+        if (category == null)
+        {
+            return BadRequest("No category found");
+        }
+
+        Screen? screen = _db.Screens.Find(ScreenId);
+        
+        if (screen == null)
+        {
+            return BadRequest("No screen found");
+        }
+        
+        screen.Categories?.Add(category);
+
+        _db.SaveChanges();
+        
+        return Ok(screen);
+
+    }
+
+    [HttpPost("/Screen/AddPost")]
+    public IActionResult AddPost(int ScreenId, int PostId)
+    {
+        Post? post = _db.Posts.Find(PostId);
+
+        if (post == null)
+        {
+            return BadRequest("No post found");
+        }
+        
+        Screen? screen = _db.Screens.Find(ScreenId);
+
+        if (screen == null)
+        {
+            return BadRequest("No Screen found");
+        }
+        
+        screen.Posts?.Add(post);
+        
+        _db.SaveChanges();
+        
+        return Ok(screen);
+    }
+
+    [HttpDelete("/Screen/RemoveCategory")]
+    public IActionResult RemoveCategory(int ScreenId, int CategoryId)
+    {
+        Category? category = _db.Categories.Find(CategoryId);
+        
+        if (category == null)
+        {
+            return BadRequest("No category found");
+        }
+        
+        Screen? screen = _db.Screens.Find(ScreenId);
+
+        if (screen == null)
+        {
+            return BadRequest("No screen found");
+        }
+
+        category.ScreenId = null;
+
+        _db.SaveChanges();
+        
+        return Ok(screen);
+    }
+
+    [HttpDelete("/Screen/RemovePost")]
+    public IActionResult RemovePost(int ScreenId, int PostId)
+    {
+        Screen? screen = _db.Screens.Find(ScreenId);
+
+        if (screen == null)
+        {
+            return BadRequest("No screen found");
+        }
+
+        Post? post = _db.Posts.Find(PostId);
+
+        if (post == null)
+        {
+            return BadRequest("No post found");
+        }
+        
+        screen.Posts?.Remove(post);
+        
+        _db.SaveChanges();
+        
+        return Ok(screen);
+    }
+
 }

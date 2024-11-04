@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using api.Data;
 using api.Data.Models;
 using api.Data.Strategies.FilterControllerStrategy;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers;
 
@@ -25,16 +27,19 @@ public class FilterController : ControllerBase
     public IActionResult Get(string selector, string? where, string? include)
     {
         
-        var test = _strategy.Execute(typeof(Screen));
+        if (_db.GetType().GetProperty(selector) == null)
+        {
+            return BadRequest("Invalid Selector");
+        }
         
+        var Dbropperty = _db.GetType().GetProperty(selector)?.PropertyType;
+
+        if (Dbropperty == null)
+        {
+            return BadRequest("Internal Server error");
+        }
         
-        // if (_db.GetType().GetProperty(selector) == null)
-        // {
-        //     return BadRequest("Invalid Selector");
-        // }
-        //
-        // var Dbropperty = _db.GetType().GetProperty(selector);
-        //
+        var test = _strategy.Execute(Dbropperty, where, include);
         // if (Dbropperty == null)
         // {
         //     return BadRequest("Internal server error");

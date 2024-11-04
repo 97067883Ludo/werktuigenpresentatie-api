@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -10,9 +11,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241029182540_AddRelationsToCategoriesAndScreens")]
+    partial class AddRelationsToCategoriesAndScreens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -142,7 +145,7 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Data.Models.Post", b =>
                 {
-                    b.HasOne("api.Data.Models.Category", null)
+                    b.HasOne("api.Data.Models.Category", "Category")
                         .WithMany("Posts")
                         .HasForeignKey("CategoryId");
 
@@ -153,6 +156,8 @@ namespace api.Migrations
                     b.HasOne("api.Data.Models.Screen", null)
                         .WithMany("Posts")
                         .HasForeignKey("ScreenId");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Image");
                 });

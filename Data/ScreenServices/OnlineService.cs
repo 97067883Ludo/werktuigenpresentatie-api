@@ -30,8 +30,8 @@ public class OnlineService : IOnlineService
     
     private void Loop(object? hallo, ElapsedEventArgs args)
     {
-        List<Screen> screens = _db.Screens.ToList();
-        screens.ForEach(CheckScreenOnlineStatus);
+        //List<Screen> screens = _db.Screens.ToList();
+        //screens.ForEach(CheckScreenOnlineStatus);
     }
 
     private void CheckScreenOnlineStatus(Screen screen)
