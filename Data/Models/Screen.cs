@@ -13,12 +13,13 @@ public class Screen : ICreatedUpdatedBase
     public bool Online { get; set; } = false;
 
     public DateTime LastSeenOnline { get; set; }
-
+    
+    public DateTime CreationDate { get; set; }
+    
+    public DateTime UpdateDate { get; set; }
+    
     //relations
     public List<Post>? Posts { get; set; } = new();
     
     public List<Category>? Categories { get; set; } = new();
-    
-    public DateTime CreationDate { get; set; }
-    public DateTime UpdateDate { get; set; }
 }
